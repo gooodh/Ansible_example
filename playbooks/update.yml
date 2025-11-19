@@ -4,3 +4,4 @@
   become: true
   roles:
       - update-packages
+      - nginx

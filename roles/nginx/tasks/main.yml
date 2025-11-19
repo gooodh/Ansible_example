@@ -1,3 +1,26 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for nginx
+
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present 
+
+- name: Copy Nginx config
+  ansible.builtin.copy:
+    src: files/nginx.conf
+    dest: /etc/nginx/nginx.conf
+  notify: Restart Nginx
+
+- name: Copy HTML
+  ansible.builtin.copy:
+    src: files/index.html
+    dest: /var/www/html/index.html
+  notify: Restart Nginx
+
+- name: Start Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true 
