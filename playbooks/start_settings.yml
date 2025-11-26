@@ -1,4 +1,3 @@
----
 - name: Update packages
   hosts: all
   become: true
@@ -8,4 +7,4 @@
     - { role: firewalld, tags: ["firewalld"] }
     - { role: fail2ban, tags: ["fail2ban"] }
     - { role: postgresql, tags: ["postgresql"] }
-
+    - { role: rabbitmq, tags: ["rabbitmq"] }

@@ -1,0 +1,48 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/rabbitmq
+
+- name: Install RabbitMQ on Debian
+  apt:
+    name: rabbitmq-server
+    state: present
+  become: true
+  when: ansible_os_family == "Debian"
+
+- name: Install RabbitMQ on RHEL/CentOS
+  yum:
+    name: rabbitmq-server
+    state: present
+  become: true
+  when: ansible_os_family == "RedHat"
+
+- name: Ensure RabbitMQ service is running
+  service:
+    name: rabbitmq-server
+    state: started
+    enabled: true
+
+- name: Enable RabbitMQ management plugin
+  command: rabbitmq-plugins enable rabbitmq_management
+  args:
+    creates: /etc/rabbitmq/enabled_plugins
+
+- name: Add RabbitMQ vhost
+  community.rabbitmq.rabbitmq_vhost:
+    name: "{{ rabbitmq_vhost }}"
+    state: present
+
+- name: Add RabbitMQ user
+  community.rabbitmq.rabbitmq_user:
+    user: "{{ rabbitmq_user }}"
+    password: "{{ rabbitmq_password }}"
+    state: present
+    tags: administrator
+
+- name: Set permissions for user on vhost
+  community.rabbitmq.rabbitmq_user:
+    user: "{{ rabbitmq_user }}"
+    vhost: "{{ rabbitmq_vhost }}"
+    configure_priv: ".*"
+    read_priv: ".*"
+    write_priv: ".*"
