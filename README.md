@@ -24,7 +24,23 @@ all:
 
 ## Start playbook command:
 
+### ▶ Запуск всех ролей:
 ```bash
-ansible-playbook playbooks/start_settings.yml -i inventory/hosts.yml -k -K
-ansible-playbook playbooks/start_settings.yml -i inventory/hosts.yml -k -K -vvv
+ansible-playbook playbooks/start_settings.yml -i inventory/hosts.yml -K
+```
+### ▶ Запуск всех ролей, подробный вывод:
+```bash
+ansible-playbook playbooks/start_settings.yml -i inventory/hosts.yml -K -vvv
+```
+### ▶ Запуск только fail2ban:
+```bash
+ansible-playbook playbooks/start_settings.yml -i inventory/hosts.yml -K --tags fail2ban
+```
+### ▶ Запуск всего, кроме одной роли:
+```bash
+ansible-playbook playbooks/start_settings.yml -i inventory/hosts.yml -K --skip-tags nginx
+```
+### ▶ Несколько ролей:
+```bash
+ansible-playbook playbooks/start_settings.yml -i inventory/hosts.yml -K --tags "nginx,firewalld"
 ```
