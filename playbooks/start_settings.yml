@@ -6,3 +6,4 @@
       - update-packages
       - nginx
       - firewalld
+      - fail2ban

@@ -1,0 +1,9 @@
+[nginx-sensitive]
+enabled = true
+filter = nginx-sensitive
+logpath = /var/log/nginx/access.log
+maxretry = 1
+findtime = 3600
+bantime = -1
+backend = auto
+action = firewallcmd-ipset
