@@ -1,3 +1,7 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # handlers file for roles/firewalld
+- name: Reload firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: reloaded

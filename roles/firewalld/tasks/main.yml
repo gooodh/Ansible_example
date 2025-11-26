@@ -18,6 +18,7 @@
     permanent: true
     state: enabled
     immediate: true
+  notify: Reload firewalld
 
 - name: Allow HTTPS (443/tcp)
   ansible.posix.firewalld:
@@ -25,8 +26,4 @@
     permanent: true
     state: enabled
     immediate: true
-
-- name: Reload firewalld
-  ansible.builtin.service:
-    name: firewalld
-    state: reloaded
+  notify: Reload firewalld
