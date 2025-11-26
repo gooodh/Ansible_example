@@ -11,3 +11,7 @@ rabbitmq_password: mypassword
 rabbitmq_vhost: myvhost
 
 
+project_name: mailing_bot_aiogram
+project_repo: "https://github.com/gooodh/AiogramAlchemyTemp.git"
+project_path: "/opt/{{ project_name }}"
+python_version: "3.12"
