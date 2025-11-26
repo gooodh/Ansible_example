@@ -1,9 +1,3 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # defaults file for roles/postgresql
-
-postgresql_version: 15
-
-postgresql_user: appuser
-postgresql_password: apppass
-postgresql_database: appdb

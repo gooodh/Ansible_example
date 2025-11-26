@@ -1,0 +1,13 @@
+
+---
+postgresql_version: 16
+
+postgresql_user: appuser
+postgresql_password: apppass
+postgresql_database: appdb
+
+rabbitmq_user: myuser
+rabbitmq_password: mypassword
+rabbitmq_vhost: myvhost
+
+
