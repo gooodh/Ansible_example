@@ -37,7 +37,7 @@
     user: "{{ rabbitmq_user }}"
     password: "{{ rabbitmq_password }}"
     state: present
-    tags: administrator
+    force: no
 
 - name: Set permissions for user on vhost
   community.rabbitmq.rabbitmq_user:
