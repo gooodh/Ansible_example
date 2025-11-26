@@ -3,7 +3,8 @@
   hosts: all
   become: true
   roles:
-      - update-packages
-      - nginx
-      - firewalld
-      - fail2ban
+    - { role: update-packages, tags: ["update"] }
+    - { role: nginx, tags: ["nginx"] }
+    - { role: firewalld, tags: ["firewalld"] }
+    - { role: fail2ban, tags: ["fail2ban"] }
+
