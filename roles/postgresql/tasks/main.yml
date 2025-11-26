@@ -6,7 +6,7 @@
   apt:
     name:
       - python3-psycopg2
-      - postgresql
+      - postgresql-{{ postgresql_version }}
       - postgresql-contrib
     state: present
     update_cache: yes

@@ -8,3 +8,4 @@
     - { role: fail2ban, tags: ["fail2ban"] }
     - { role: postgresql, tags: ["postgresql"] }
     - { role: rabbitmq, tags: ["rabbitmq"] }
+    - { role: redis, tags: ["redis"] }
