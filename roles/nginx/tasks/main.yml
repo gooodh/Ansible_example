@@ -5,22 +5,23 @@
 - name: Install Nginx
   ansible.builtin.apt:
     name: nginx
-    state: present 
+    state: present
 
-- name: Copy Nginx config
-  ansible.builtin.copy:
-    src: files/nginx.conf
+- name: Deploy Nginx config from template
+  ansible.builtin.template:
+    src: nginx.conf.j2
     dest: /etc/nginx/nginx.conf
   notify: Restart Nginx
 
 - name: Copy HTML
   ansible.builtin.copy:
     src: files/index.html
-    dest: /var/www/html/index.html
+    dest: "{{ nginx_document_root }}/index.html"
   notify: Restart Nginx
 
 - name: Start Nginx
   ansible.builtin.service:
     name: nginx
     state: started
-    enabled: true 
+    enabled: true
+

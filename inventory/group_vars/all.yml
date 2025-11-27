@@ -2,6 +2,12 @@
 ---
 postgresql_version: 16
 
+domain_name: example.com
+certbot_email: s.b.nikuliny@gmail.com
+
+nginx_server_name: "ferum-dsg.duckdns.org"
+nginx_document_root: "/var/www/html"
+
 postgresql_user: appuser
 postgresql_password: apppass
 postgresql_database: appdb

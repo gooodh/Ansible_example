@@ -1,0 +1,49 @@
+user www-data;
+worker_processes auto;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+    sendfile      on;
+
+    # -----------------------------------------------------
+    # HTTP (порт 80) — только редирект на HTTPS
+    # -----------------------------------------------------
+    server {
+        listen 80;
+        server_name {{ nginx_server_name }};
+
+        # Let’s Encrypt challenge
+        location /.well-known/acme-challenge/ {
+            root {{ nginx_document_root }};
+        }
+
+        # Redirect all traffic to HTTPS
+        return 301 https://$host$request_uri;
+    }
+
+    # -----------------------------------------------------
+    # HTTPS (порт 443) — с сертификатами Certbot
+    # -----------------------------------------------------
+    server {
+        listen 443 ssl;
+        server_name {{ nginx_server_name }};
+
+        ssl_certificate     /etc/letsencrypt/live/{{ nginx_server_name }}/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/{{ nginx_server_name }}/privkey.pem;
+
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_prefer_server_ciphers on;
+
+        root {{ nginx_document_root }};
+        index index.html index.htm;
+
+        location / {
+            try_files $uri $uri/ =404;
+        }
+    }
+}

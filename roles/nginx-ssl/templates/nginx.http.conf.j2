@@ -1,0 +1,14 @@
+server {
+    listen 80;
+    server_name {{ nginx_server_name }};
+    root {{ nginx_document_root }};
+    index index.html;
+
+    location /.well-known/acme-challenge/ {
+        alias {{ nginx_document_root }}/.well-known/acme-challenge/;
+    }
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}

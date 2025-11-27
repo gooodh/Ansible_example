@@ -1,0 +1,50 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/nginx-ssl
+
+# 1. Install nginx
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+# 2. Deploy HTTP config
+- name: Deploy initial HTTP nginx config
+  template:
+    src: nginx.http.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify: restart nginx
+
+# 3. Start nginx
+- name: Ensure nginx is running
+  service:
+    name: nginx
+    state: started
+    enabled: true
+
+# 4. Install certbot
+- name: Install certbot + nginx plugin
+  apt:
+    name:
+      - certbot
+      - python3-certbot-nginx
+    state: present
+
+# 5. Obtain certificate automatically
+- name: Obtain Let's Encrypt certificate
+  command: >
+    certbot certonly --webroot
+    -w {{ nginx_document_root }}
+    -d {{ nginx_server_name }}
+    --email {{ certbot_email }}
+    --agree-tos --no-eff-email -n
+  args:
+    creates: "/etc/letsencrypt/live/{{ nginx_server_name }}/fullchain.pem"
+
+# 6. Deploy HTTPS config
+- name: Deploy HTTPS nginx config
+  template:
+    src: nginx.https.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify: restart nginx

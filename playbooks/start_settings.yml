@@ -3,7 +3,7 @@
   become: true
   roles:
     - { role: update-packages, tags: ["update"] }
-    - { role: nginx, tags: ["nginx"] }
+    - { role: nginx-ssl, tags: ["nginx", "ssl"] }
     - { role: firewalld, tags: ["firewalld"] }
     - { role: fail2ban, tags: ["fail2ban"] }
     - { role: postgresql, tags: ["postgresql"] }
