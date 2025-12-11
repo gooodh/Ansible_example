@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: "Your Name"
+  description: "Docker CE installer for Debian/Ubuntu with proper GPG handling"
+  min_ansible_version: 2.9
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+dependencies: []

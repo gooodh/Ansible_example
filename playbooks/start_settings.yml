@@ -10,3 +10,4 @@
     - { role: rabbitmq, tags: ["rabbitmq"] }
     - { role: redis, tags: ["redis"] }
     - { role: python_project, tags: ["python_project"] }
+    - { role: docker, tags: ["docker"] }

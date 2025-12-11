@@ -1,0 +1,130 @@
+---
+# ===========================
+# 1. Удаление старых репозиториев
+# ===========================
+
+- name: Remove old Docker sources.list.d entries
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ lookup('ansible.builtin.fileglob', '/etc/apt/sources.list.d/docker*', wantlist=True) }}"
+  become: true
+  when: ansible_os_family == "Debian"
+
+- name: Remove Docker entries from /etc/apt/sources.list
+  lineinfile:
+    path: /etc/apt/sources.list
+    regexp: 'download\\.docker\\.com'
+    state: absent
+  become: true
+  when: ansible_os_family == "Debian"
+
+# ===========================
+# 2. Создание keyrings
+# ===========================
+
+- name: Ensure keyrings directory exists
+  file:
+    path: /usr/share/keyrings
+    state: directory
+    mode: '0755'
+  become: true
+  when: ansible_os_family == "Debian"
+
+- name: Remove any previously downloaded Docker key
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /usr/share/keyrings/docker.gpg
+    - /usr/share/keyrings/docker.asc
+  become: true
+  when: ansible_os_family == "Debian"
+
+# ===========================
+# 3. Корректная загрузка и DEARMOR GPG-ключа
+# ===========================
+
+- name: Download Docker ASCII-armored public key
+  get_url:
+    url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
+    dest: /usr/share/keyrings/docker.asc
+    mode: '0644'
+  become: true
+  when: ansible_os_family == "Debian"
+
+- name: Convert key to binary keyring format (DEARMOR)
+  command: "gpg --dearmor -o /usr/share/keyrings/docker.gpg /usr/share/keyrings/docker.asc"
+  args:
+    creates: /usr/share/keyrings/docker.gpg
+  become: true
+  when: ansible_os_family == "Debian"
+
+- name: Set keyring permissions
+  file:
+    path: /usr/share/keyrings/docker.gpg
+    mode: '0644'
+  become: true
+  when: ansible_os_family == "Debian"
+
+# ===========================
+# 4. Добавление нового репозитория Docker
+# ===========================
+
+- name: Add Docker apt repository
+  apt_repository:
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    filename: docker
+    state: present
+  become: true
+  when: ansible_os_family == "Debian"
+
+# ===========================
+# 5. apt update
+# ===========================
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  become: true
+  when: ansible_os_family == "Debian"
+
+# ===========================
+# 6. Установка Docker CE
+# ===========================
+
+- name: Install Docker CE
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+  become: true
+  when: ansible_os_family == "Debian"
+
+# ===========================
+# 7. Запуск сервиса
+# ===========================
+
+- name: Enable and start Docker
+  service:
+    name: docker
+    enabled: yes
+    state: started
+  become: true
+
+# ===========================
+# 8. Добавление пользователей в группу docker
+# ===========================
+
+- name: Add users to docker group
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: yes
+  loop: "{{ docker_users }}"
+  become: true
+  when: docker_users | length > 0
