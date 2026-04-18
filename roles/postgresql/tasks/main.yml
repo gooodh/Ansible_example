@@ -1,15 +1,41 @@
-#SPDX-License-Identifier: MIT-0
 ---
 # tasks file for roles/postgresql
 
-- name: Install dependencies
+- name: Install prerequisites for repository
   apt:
     name:
-      - python3-psycopg2
-      - postgresql-{{ postgresql_version }}
-      - postgresql-contrib
+      - ca-certificates
+      - curl
+      - gnupg
     state: present
     update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Add PostgreSQL APT key
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Add PostgreSQL repository (PGDG)
+  apt_repository:
+    repo: "deb http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main"
+    state: present
+    filename: "pgdg"
+  when: ansible_os_family == "Debian"
+
+- name: Update apt cache after adding repo
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install PostgreSQL and dependencies
+  apt:
+    name:
+      - "postgresql-{{ postgresql_version }}"
+      - "postgresql-contrib-{{ postgresql_version }}"
+      - python3-psycopg2
+    state: present
   when: ansible_os_family == "Debian"
 
 - name: Start and enable PostgreSQL
